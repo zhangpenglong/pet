@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pipichongwu.modules.stick.dao.StickMapper">
+    <resultMap type="com.pipichongwu.modules.stick.model.Stick" id="allStickMap">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result property="stickMsg" column="stickMsg"/>
+        <result property="pic" column="pic"/>
+        <result property="creatDate" column="creatDate"/>
+        <result property="userName" column="userName"/>
+        <result property="wxUserName" column="wxUserName"/>
+        <result property="headUrl" column="headUrl"/>
+        <result property="commentMsg" column="commentMsg"/>
+        <result property="fabulousCount" column="fabulousCount"/>
+        <result property="comNum" column="comNum"/>
+        <result property="longitude" column="longitude"/>
+        <result property="video" column="video"/>
+        <result property="latitude" column="latitude"/>
+        <result property="addressName" column="addressName"/>
+        <result property="address" column="address"/>
+        <result property="isFabulous" column="isFabulous"/>
+
+    </resultMap>
+
+    <select id="selectByPageCount" parameterType="com.pipichongwu.modules.stick.model.Stick" resultType="java.lang.Integer">
+        SELECT  COUNT(id)
+         FROM stick
+          where isValid = 1
+		<if test="myFlag == true">
+			AND userId = #{userId}
+		</if>
+
+    </select>
+
+    <select id="selectByPage" parameterType="com.pipichongwu.modules.stick.model.Stick"  resultMap="allStickMap" >
+       SELECT
+	sti.id,
+	sti.picNum,
+	sti.stickMsg,
+	sti.pic,
+	sti.creatDate,
+	sti.longitude,
+	sti.video,
+	sti.latitude,
+	sti.addressName,
+	sti.address,
+	us.userName AS userName,
+	us.wxUserName AS wxUserName,
+	us.headUrl AS headUrl,
+	fa.userconut AS fabulousCount,
+    com.co AS comNum,
+    fa1.stickId  AS isFabulous
+
+FROM
+	stick sti
+LEFT JOIN user us ON sti.userId = us.id
+LEFT JOIN (SELECT count(userId) co,stickId FROM comment WHERE replyId is null GROUP BY stickId) com ON com.stickId = sti.id
+LEFT JOIN (
+	SELECT
+		stickId,
+		COUNT(userId) userconut
+	FROM
+		fabulous
+	WHERE
+		isValid = 1
+	GROUP BY
+		stickId
+) fa ON fa.stickId = sti.id  LEFT JOIN
+(	SELECT
+		stickId
+	FROM
+		fabulous
+	WHERE
+		isValid = 1  AND userId = #{userId}) fa1 ON fa1.stickId = sti.id
+WHERE
+	sti.isValid = 1
+	<if test="myFlag == true">
+		AND sti.userId = #{userId}
+	</if>
+AND us.isValid = 1
+  order by sti.id desc limit ${limitOffset},${pageSize};
+    </select>
+
+    <select id="selectById" parameterType="com.pipichongwu.modules.stick.model.Stick" resultMap="allStickMap">
+        SELECT
+	sti.id,
+	sti.picNum,
+	sti.stickMsg,
+	sti.pic,
+	sti.creatDate,
+	sti.longitude,
+	sti.video,
+	sti.latitude,
+	sti.addressName,
+	sti.address,
+	us.userName AS userName,
+	us.wxUserName AS wxUserName,
+	us.headUrl AS headUrl,
+	fa.userconut AS fabulousCount,
+    com.co AS comNum,
+    fa1.stickId  AS isFabulous
+
+FROM
+	stick sti
+LEFT JOIN user us ON sti.userId = us.id
+LEFT JOIN (SELECT count(userId) co,stickId FROM comment where replyId  IS null  GROUP BY stickId) com ON com.stickId = sti.id
+LEFT JOIN (
+	SELECT
+		stickId,
+		COUNT(userId) userconut
+	FROM
+		fabulous
+	WHERE
+		isValid = 1
+	GROUP BY
+		stickId
+) fa ON fa.stickId = sti.id    LEFT JOIN
+(	SELECT
+		stickId
+	FROM
+		fabulous
+	WHERE
+		isValid = 1  AND userId = #{userId}) fa1 ON fa1.stickId = sti.id
+WHERE
+	sti.isValid = 1
+AND us.isValid = 1 AND sti.id = #{id}
+
+
+    </select>
+
+	<insert id="insertStick" parameterType="com.pipichongwu.modules.stick.model.Stick">
+		insert INTO stick VALUES (id,#{userId},#{creatDate},#{pic},#{picNum},#{longitude},#{video},#{latitude},#{addressName},#{address},#{stickMsg},#{isValid})
+	</insert>
+
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <!--default stdout appender  -->
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d %p [%c] [%t] - &lt;%m&gt;%n</pattern>
+    </encoder>
+  </appender>
+  <!--default file appender  -->
+  <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <File>${catalina.home}/logs/petweb.log</File>
+    <encoder>
+      <pattern>%d %p [%c] [%t] - &lt;%m&gt;%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${catalina.home}/logs/petweb.log.%d{.yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  <!-- email appender  -->
+  <appender name="emaillog" class="ch.qos.logback.classic.net.SMTPAppender">
+      <BufferSize>2048</BufferSize>
+	  <SMTPHost>mail.dongao.com</SMTPHost>
+	  <To>retraindev@dongao.com</To>
+	  <From>robot@dongao.com</From>
+	  <Username>robot@dongao.com</Username>
+	  <Password>aNV5fcL2E7</Password>
+	  <Subject> op form logback</Subject>
+  	  <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+	  	  <marker>NOTIFY_ADMIN</marker>
+	  	<!--  &lt;!&ndash; you specify add as many markers as you want &ndash;&gt;-->
+	  	  <marker>ANOTHER_MARKER</marker>
+  	  </evaluator>
+      <layout class="ch.qos.logback.classic.PatternLayout">
+	  	<Pattern>%date %-5level %logger - %message%n</Pattern>
+	  </layout>
+  </appender>
+  <!-- business appender  -->
+  <appender name="businessLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- °´ÿͬ¹�ļ��Ś´ﵽ100MҲ»Ặ¶¯τ¼�¯τ¼�¹̵³Ⱥip¸򊻠-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.home}/logs/business/qd-business-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<!-- ɕ־خ´󶅀�ͬ -->
+            <maxHistory>60</maxHistory>
+		</rollingPolicy>
+		<!-- ¶A¢µðattern -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS},%msg%n</pattern>
+		</encoder>
+  </appender>
+  <!-- slowrequest appender  -->
+  <appender name="slowrequest" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- °´ͬ»ع�ily -->
+            <fileNamePattern>${catalina.home}/logs/petweb-slowrequest-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- ɕ־خ´󶅀�0ͬ -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+  </appender>
+   <!-- ³�֖¾ appender  -->
+   <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- °´ͬ»ع�ily -->
+            <!-- log.dir ՚maven profileoƤ׃ -->
+            <fileNamePattern>${catalina.home}/logs/petweb-error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- ɕ־خ´󶅀�0ͬ -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+   </appender>
+  <root level="info">
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="logfile"/>
+  </root>
+  <!-- default -->
+  <logger name="com.dongao" level="info" >
+  </logger>
+  <!--emaillogɕ־-->
+  <!--<logger name="op-email" level="info" additivity="false">
+        <appender-ref ref="emaillog"/>
+  </logger>-->
+  <!--slowrequestɕ־-->
+  <logger name="qd-slowrequest" level="info" additivity="false">
+        <appender-ref ref="slowrequest"/>
+  </logger>
+  <!--´ɕ־-->
+  <logger name="op-error" level="info" additivity="false">
+        <appender-ref ref="error"/>
+  </logger>
+  <!-- ҵϱɕ־-->
+  <logger name="op-business" level="info" additivity="false">
+		<appender-ref ref="businessLogFile" />
+  </logger>
+
+  <!-- ²㋔єŜ²㋔µĲ㋔` -->
+<!--  <logger name="com.dongao.core.mycomponent.stopwatch.StopWatchTest" level="TRACE" />
+  <logger name="com.dongao.core.mycomponent.PerformanceMonitorTest" level="TRACE" />
+  &lt;!&ndash; єŜ²㋔ &ndash;&gt;
+  <logger name="com.dongao.core.mycomponent.PerformanceMonitor" level="TRACE" />
+  &lt;!&ndash; єŜ²㋔½ẻ»䘜&ndash;&gt;
+  <logger name="com.dongao.core.mycomponent.stopwatch.support.AdvancedStopWatchSummary" level="TRACE" />
+  <logger name="com.dongao.core.mycomponent.stopwatch.support.DefaultStopWatchSummary" level="TRACE" />
+  <logger name="com.dongao.core.mycomponent.stopwatch.support.SimpleStopWatchSummary" level="TRACE" />-->
+  <!-- ¿ٖǌ¨´󓠳ql£¬ʏПǰ¿ʗ¢ˍ»򽪬evel¸ŎªERROR  start -->
+  <logger name="com.ibatis" level="DEBUG" />
+  <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
+  <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
+  <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />
+  <logger name="java.sql.Connection" level="DEBUG" />
+  <logger name="java.sql.Statement" level="DEBUG" />
+  <logger name="java.sql.PreparedStatement" level="DEBUG" />
+ <!-- ¿ٖǌ¨´󓠳ql£¬ʏПǰ¿ʗ¢ˍ»򽪬evel¸ŎªERROR  end -->
+</configuration>

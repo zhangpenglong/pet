@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pipichongwu.modules.comment.dao.CommentMapper">
+
+
+    <select id="selectByStickPage" parameterType="com.pipichongwu.modules.comment.model.Comment" resultType="com.pipichongwu.modules.comment.model.Comment">
+          SELECT  com.*,us.wxUserName comWxUserName,us.userName comUserName,us.headUrl headUrl,fa.faco fabulousCount,fa1.comId  AS isFabulous
+         FROM comment com LEFT JOIN  user us ON com.userId = us.id LEFT JOIN (
+	SELECT
+		count(id) faco,
+		comId
+	FROM
+		fabulous
+	WHERE
+		isValid = 1
+	AND comId IS NOT NULL
+	GROUP BY
+		comId
+) fa ON fa.comId = com.id  LEFT JOIN
+(	SELECT
+		comId
+	FROM
+		fabulous
+	WHERE
+		isValid = 1  AND userId = #{userId}) fa1 ON fa1.comId = com.id
+          where com.isValid = 1 AND us.isValid = 1 AND com.stickId = #{stickId} AND com.replyId is null
+           order by id desc limit ${limitOffset},${pageSize};
+
+    </select>
+
+    <select id="selectReply" parameterType="java.lang.Integer" resultType="com.pipichongwu.modules.comment.model.Comment">
+        SELECT
+	com.*, us.wxUserName comWxUserName,
+	us.userName comUserName,
+	us.headUrl headUrl,
+  fa.faco fabulousCount
+FROM
+	comment com
+LEFT JOIN user us ON com.userId = us.id
+LEFT JOIN (SELECT count(id) faco,comId FROM fabulous  where isValid = 1 AND comId is NOT null  GROUP BY comId)  fa ON fa.comId = com.id
+WHERE
+	com.isValid = 1
+AND us.isValid = 1
+AND replyId = #{replyId}
+
+
+    </select>
+
+    <insert id="addCom" parameterType="com.pipichongwu.modules.comment.model.Comment">
+        INSERT  INTO comment  VALUES (id,#{userId},#{stickId},#{commentMsg},#{replyId},#{replyComId},#{commentPic},#{creatDate},#{isValid})
+    </insert>
+
+
+</mapper>

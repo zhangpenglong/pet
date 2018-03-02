@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pipichongwu.modules.fabulous.dao.FabulousMapper">
+
+
+    <insert id="addFabu" parameterType="com.pipichongwu.modules.fabulous.model.Fabulous">
+        INSERT INTO fabulous  VALUES (id,#{stickId},#{userId},#{comId},#{creatDate},#{isValid})
+    </insert>
+
+    <select id="selectByUserId" parameterType="com.pipichongwu.modules.fabulous.model.Fabulous" resultType="com.pipichongwu.modules.fabulous.model.Fabulous">
+        SELECT  * FROM fabulous where isValid =1 AND userId = #{userId}  AND stickId = #{stickId}
+    </select>
+    <select id="selectByComId" parameterType="com.pipichongwu.modules.fabulous.model.Fabulous" resultType="com.pipichongwu.modules.fabulous.model.Fabulous">
+        SELECT  * FROM fabulous where isValid =1 AND userId = #{userId}  AND comId = #{comId}
+    </select>
+
+    <select id="countFabu" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(userId)  FROM fabulous where isValid = 1 AND stickId = #{stickId}
+    </select>
+
+    <select id="countFabuByComId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(userId)  FROM fabulous where isValid = 1 AND comId = #{comId}
+    </select>
+
+
+</mapper>

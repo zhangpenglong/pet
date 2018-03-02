@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pipichongwu.modules.user.dao.UserMapper">
+
+    <select id="selectById" parameterType="java.lang.Integer"  resultType="com.pipichongwu.modules.user.model.User" >
+        select *
+        from user  where id=#{id}
+
+    </select>
+    <select id="selectByOpenId" parameterType="java.lang.String"  resultType="com.pipichongwu.modules.user.model.User" >
+        select *
+        from user  where openid=#{openid}
+    </select>
+    <insert id="insert" parameterType="com.pipichongwu.modules.user.model.User" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty='id' resultType='int' order='AFTER'  >
+            select LAST_INSERT_ID();
+        </selectKey>
+
+        INSERT  INTO user
+           VALUES (id,#{userName},#{wxUserName},#{city},#{country},#{gender},#{province},#{openid},#{live},#{integral},#{longitude},#{accuracy},#{speed},#{loginIp},#{loginTime},#{latitude},#{headUrl},#{isValid})
+    </insert>
+    <update id="updateUser" parameterType="com.pipichongwu.modules.user.model.User">
+        UPDATE user <set>
+        <if test="userName != null">
+            userName=#{userName},
+        </if>
+        <if test="wxUserName != null">
+            wxUserName=#{wxUserName},
+        </if>
+        <if test="live != null">
+            live=#{live},
+        </if>
+        <if test="openid != null">
+            openid=#{openid},
+        </if>
+        <if test="province != null">
+            province=#{province},
+        </if>
+        <if test="city != null">
+            city=#{city},
+        </if>
+        <if test="gender != null">
+            gender=#{gender},
+        </if>
+        <if test="country != null">
+            country=#{country},
+        </if>
+        <if test="longitude != null">
+            longitude=#{longitude},
+        </if>
+        <if test="accuracy != null">
+            accuracy=#{accuracy},
+        </if>
+        <if test="speed != null">
+            speed=#{speed},
+        </if>
+        <if test="loginTime != null">
+            loginTime=#{loginTime},
+        </if>
+        <if test="latitude != null">
+            latitude=#{latitude},
+        </if>
+
+        <if test="integral != null">
+            integral=#{integral},
+        </if>
+        <if test="headUrl != null">
+            headUrl=#{headUrl},
+        </if>
+        <if test="isValid != null">
+            isValid=#{isValid},
+        </if>
+        <if test="loginIp != null">
+            loginIp=#{loginIp},
+        </if>
+    </set>
+        WHERE id=#{id}
+    </update>
+</mapper>
